@@ -1,0 +1,130 @@
+/* === Global Body === */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+  padding: 20px;
+  background-image: url('./assets/1772.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* === Container Utama === */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+/* === Judul === */
+@font-face {
+  font-family: 'BagelFatOne';
+  src: url('./assets/BagelFatOne-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+h1 {
+  color: white;
+  margin-bottom: 20px;
+  font-size: 50px;
+  font-family: 'BagelFatOne', sans-serif;
+}
+
+
+/* === Box Putih di Tengah === */
+.preview-box {
+  background: white;
+  border-radius: 30px;
+  padding: 20px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+/* === Area Preview Kamera atau Gambar === */
+.preview {
+  background-color: #ccc;
+  width: 100%;
+  height: 250px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+video, canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: none;
+}
+
+/* === Tombol-Tombol === */
+.controls,
+.button-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+  gap: 10px;
+}
+
+.button-row.two-buttons {
+  flex-wrap: wrap;
+}
+
+button,
+.custom-file {
+  flex: 1;
+  padding: 12px 16px;
+  background-color: #5ba832;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s ease;
+  font-family: 'BagelFatOne', sans-serif;
+  text-align: center;
+}
+
+button:hover,
+.custom-file:hover {
+  background-color: #489326;
+}
+
+/* === Input File Tersembunyi === */
+input[type="file"] {
+  display: none;
+}
+
+/* === Area Tata Letak Gambar === */
+.design-area {
+  margin-top: 20px;
+  background-image: url('./assets/SL-071720-32520-25.jpg');
+  background-color: #ccc;
+  height: 400px;
+  width: 100%;
+  max-width: 100%;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  border: 2px dashed #aaa;
+}
+
+
+/* === Gambar yang Bisa Digeser === */
+.draggable {
+  position: absolute;
+  max-width: 200px;
+  border: 2px solid #555;
+  cursor: grab;
+  user-select: none;
+  z-index: 10;
+}

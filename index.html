@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vibe Coding - Kamera & Desain</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+  <h1>Photobooth</h1>
+
+  <div class="preview-box">
+    <div class="preview">
+      <video id="video" autoplay playsinline></video>
+    </div>
+
+    <div class="button-row">
+      <button id="startCamera">Aktifkan Kamera</button>
+    </div>
+
+    <div class="button-row two-buttons">
+      <label for="uploadImage" class="custom-file">Choose File</label>
+      <input type="file" id="uploadImage" accept="image/*" hidden />
+      <button  id="takePhoto">Ambil Foto</button> <a href=""></a>
+    </div>
+    <div class="button-row">
+      <a href="canvas.html">
+        <button id="goToDesign">Lanjut ke Desain</button>
+      </a>
+    </div>
+    <div class="preview">
+      <canvas id="canvas"></canvas> 
+    </div>
+    
+  </div>
+</div>
+
+  <script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</body>
+</html>
