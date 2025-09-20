@@ -113,7 +113,7 @@ input[type="file"] {
   background-repeat: no-repeat;
   background-color: #ccc;
   width: 100%;
-  max-width: 12000px; /* Batas maksimal di desktop besar */
+  max-width: 1200px; /* Batas maksimal di desktop besar */
   height: 600px; /* Lebih tinggi untuk desktop */
   border-radius: 10px;
   position: relative;

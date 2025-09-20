@@ -184,9 +184,6 @@ if (downloadBtn) {
 document.getElementById("resetData").addEventListener("click", () => {
       const confirmReset = confirm("Yakin ingin menghapus semua foto dan booth?");
       if (confirmReset) {
-        localStorage.removeItem("capturedImages");
-        localStorage.removeItem("boothImage");
-        alert("Semua data berhasil dihapus.");
         window.location.href = "index.html";
       }
     });
