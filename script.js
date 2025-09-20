@@ -1,7 +1,7 @@
-// ==== UNTUK index.html ==== //
+// ============ UNTUK index.html ============ //
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
-const ctx = canvas?.getContext('2d'); // pakai optional chaining agar aman
+const ctx = canvas?.getContext('2d');
 const startCameraBtn = document.getElementById('startCamera');
 const takePhotoBtn = document.getElementById('takePhoto');
 const uploadImage = document.getElementById('uploadImage');
@@ -13,11 +13,11 @@ if (startCameraBtn) {
       .then(stream => {
         video.srcObject = stream;
       })
-      .catch(err => alert("Gagal mengakses kamera 😢"));
+      .catch(() => alert("Gagal mengakses kamera 😢"));
   });
 }
 
-// Ambil foto
+// Ambil foto dan simpan ke localStorage
 if (takePhotoBtn) {
   takePhotoBtn.addEventListener('click', () => {
     if (!canvas || !ctx) return;
@@ -26,69 +26,92 @@ if (takePhotoBtn) {
     canvas.height = video.videoHeight;
     ctx.drawImage(video, 0, 0);
 
-    const image = new Image();
-    image.src = canvas.toDataURL('image/png');
+    const imageData = canvas.toDataURL('image/png');
+    const existing = JSON.parse(localStorage.getItem('capturedImages')) || [];
+    existing.push(imageData);
+    localStorage.setItem('capturedImages', JSON.stringify(existing));
 
-    // Simpan ke localStorage untuk dipakai di canvas.html
-    localStorage.setItem('capturedImage', image.src);
-
-    alert("Foto berhasil diambil! Klik 'Lanjut ke Desain' untuk melanjutkan.");
+    // Langsung pindah ke canvas.html
+    window.location.href = "canvas.html";
   });
 }
 
-// Upload gambar
+// Upload booth gambar
 if (uploadImage) {
   uploadImage.addEventListener('change', (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
 
     reader.onload = function (event) {
-      const imageData = event.target.result;
-      localStorage.setItem('capturedImage', imageData);
-      alert("Gambar berhasil diunggah! Klik 'Lanjut ke Desain'.");
+      const image = new Image();
+      image.onload = () => {
+        const boothData = {
+          src: event.target.result,
+          width: image.width,
+          height: image.height
+        };
+        localStorage.setItem('boothImage', JSON.stringify(boothData));
+        alert("Booth berhasil dimasukkan! Klik 'Lanjut ke Desain'.");
+      };
+      image.src = event.target.result;
     };
 
-    if (file) {
-      reader.readAsDataURL(file);
-    }
+    if (file) reader.readAsDataURL(file);
   });
 }
 
 
-// ==== UNTUK canvas.html ==== //
-const designArea = document.getElementById('designArea');
 
-/// Cek apakah ada gambar sebelumnya saat halaman dimuat
+// ============ UNTUK canvas.html ============ //
 window.addEventListener('DOMContentLoaded', () => {
   const designArea = document.getElementById('designArea');
-  const savedImage = localStorage.getItem('capturedImage');
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas?.getContext('2d');
 
-  if (savedImage && designArea) {
+  // Tampilkan booth (jika ada)
+  const boothDataRaw = localStorage.getItem('boothImage');
+  if (boothDataRaw && canvas && ctx) {
+    const boothData = JSON.parse(boothDataRaw);
     const img = new Image();
     img.onload = () => {
-      makeDraggableImage(img); // masuk ke designArea dan bisa di-drag
+      canvas.width = boothData.width;
+      canvas.height = boothData.height;
+      ctx.drawImage(img, 0, 0);
     };
-    img.src = savedImage;
+    img.src = boothData.src;
+  }
+
+  // Tampilkan semua hasil foto
+  const imagesRaw = localStorage.getItem('capturedImages');
+  if (imagesRaw && designArea) {
+    const imageList = JSON.parse(imagesRaw);
+    imageList.forEach((src) => {
+      const img = new Image();
+      img.onload = () => {
+        makeDraggableImage(img);
+      };
+      img.src = src;
+    });
   } else {
-    alert("Belum ada gambar yang diambil atau diunggah.");
+    // Kalau tidak ada foto, balik ke halaman utama
   }
 });
 
 
-
-
-// Fungsi agar gambar bisa digeser dengan nyaman
+// Fungsi agar gambar bisa digeser
 function makeDraggableImage(img) {
+  const designArea = document.getElementById('designArea');
+  if (!designArea) return;
+
   img.classList.add('draggable');
+  img.style.position = 'absolute';
   img.style.left = '10px';
   img.style.top = '10px';
-  img.style.position = 'absolute';
   img.style.cursor = 'grab';
   img.style.userSelect = 'none';
   img.draggable = false;
   img.style.zIndex = 10;
 
-  const designArea = document.getElementById('designArea');
   designArea.appendChild(img);
 
   let isDragging = false;
@@ -99,24 +122,22 @@ function makeDraggableImage(img) {
     isDragging = true;
     img.style.cursor = 'grabbing';
 
-    const imgRect = img.getBoundingClientRect();
+    const rect = img.getBoundingClientRect();
     const areaRect = designArea.getBoundingClientRect();
 
-    offsetX = e.clientX - imgRect.left;
-    offsetY = e.clientY - imgRect.top;
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
 
     img.style.zIndex = 1000;
-
     e.preventDefault();
   });
 
   document.addEventListener('mousemove', (e) => {
-    if (isDragging) {
+    if (isDragging && designArea) {
       const areaRect = designArea.getBoundingClientRect();
       let newLeft = e.clientX - areaRect.left - offsetX;
       let newTop = e.clientY - areaRect.top - offsetY;
 
-      // Batasi posisi ke dalam area desain
       newLeft = Math.max(0, Math.min(newLeft, designArea.clientWidth - img.offsetWidth));
       newTop = Math.max(0, Math.min(newTop, designArea.clientHeight - img.offsetHeight));
 
@@ -134,3 +155,38 @@ function makeDraggableImage(img) {
   });
 }
 
+
+// Tombol download hasil desain
+const downloadBtn = document.getElementById('downloadImage');
+if (downloadBtn) {
+  downloadBtn.addEventListener('click', () => {
+    const designArea = document.getElementById('designArea');
+    if (!designArea) return;
+
+    html2canvas(designArea).then((canvas) => {
+      const link = document.createElement('a');
+      link.download = 'desain-ku.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  });
+}
+  document.getElementById("resetData").addEventListener("click", () => {
+      const confirmReset = confirm("Yakin ingin menghapus semua foto dan booth?");
+      if (confirmReset) {
+        localStorage.removeItem("capturedImages");
+        localStorage.removeItem("boothImage");
+        alert("Semua data berhasil dihapus.");
+        window.location.href = "index.html";
+      }
+    });
+
+document.getElementById("resetData").addEventListener("click", () => {
+      const confirmReset = confirm("Yakin ingin menghapus semua foto dan booth?");
+      if (confirmReset) {
+        localStorage.removeItem("capturedImages");
+        localStorage.removeItem("boothImage");
+        alert("Semua data berhasil dihapus.");
+        window.location.href = "index.html";
+      }
+    });

@@ -27,7 +27,7 @@ body {
 }
 
 h1 {
-  color: white;
+  color: #377a14;
   margin-bottom: 20px;
   font-size: 50px;
   font-family: 'BagelFatOne', sans-serif;
@@ -108,15 +108,21 @@ input[type="file"] {
 .design-area {
   margin-top: 20px;
   background-image: url('./assets/SL-071720-32520-25.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   background-color: #ccc;
-  height: 400px;
   width: 100%;
-  max-width: 100%;
+  max-width: 12000px; /* Batas maksimal di desktop besar */
+  height: 600px; /* Lebih tinggi untuk desktop */
   border-radius: 10px;
   position: relative;
   overflow: hidden;
   border: 2px dashed #aaa;
+  margin-left: auto;
+  margin-right: auto;
 }
+
 
 
 /* === Gambar yang Bisa Digeser === */
